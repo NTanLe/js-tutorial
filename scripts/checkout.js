@@ -125,6 +125,7 @@ function renderOrderDelivery(){
             )
             container.remove();
             updateCart()
+            renderPayment();
         })
     });
 
@@ -185,7 +186,75 @@ function renderOrderDelivery(){
             const {productId,deliveryOptionId} = element.dataset;
             updateDeliveryOption(productId,deliveryOptionId);
             renderOrderDelivery();
+            renderPayment();
         })
 });
 }
+function renderPayment(){
+    let productPriceCents = 0;
+    let shippingPriceCents = 0
+    cart.forEach((item) =>{
+        const productId = item.productId;
+        let matchingProduct;
+        products.forEach((product)=>{
+            if(productId === product.id){
+                matchingProduct = product;
+            }
+        });
+        productPriceCents += matchingProduct.priceCents * item.quantity;
+        let deliveryOption;
+        const deliveryOptionId = item.deliveryOptionId;
+        deliveryOptions.forEach((option) =>{
+            if (option.id === deliveryOptionId) {
+                deliveryOption = option;
+            }
+        });
+        shippingPriceCents+=deliveryOption.priceCents;
+    })
+    const totalPriceNotTax = productPriceCents+shippingPriceCents;
+    const tax = totalPriceNotTax*0.1;
+    const totalCents = totalPriceNotTax+tax;
+
+
+    const summaryPaymentHTML =
+        `
+         <div class="payment-summary-title">
+            Order Summary
+          </div>
+
+          <div class="payment-summary-row">
+            <div>Items (3):</div>
+            <div class="payment-summary-money">${formatMoney(productPriceCents)}</div>
+          </div>
+
+          <div class="payment-summary-row">
+            <div>Shipping &amp; handling:</div>
+            <div class="payment-summary-money">${formatMoney(shippingPriceCents)}</div>
+          </div>
+
+          <div class="payment-summary-row subtotal-row">
+            <div>Total before tax:</div>
+            <div class="payment-summary-money">${formatMoney(totalPriceNotTax)}</div>
+          </div>
+
+          <div class="payment-summary-row">
+            <div>Estimated tax (10%):</div>
+            <div class="payment-summary-money">${formatMoney(tax)}</div>
+          </div>
+
+          <div class="payment-summary-row total-row">
+            <div>Order total:</div>
+            <div class="payment-summary-money">${formatMoney(totalCents)}</div>
+          </div>
+
+          <button class="place-order-button button-primary">
+            Place your order
+          </button>
+        </div>
+        `;
+    document.querySelector('.js-payment-summary').innerHTML =summaryPaymentHTML;
+}
+renderPayment();
+
+
 renderOrderDelivery();
