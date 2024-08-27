@@ -1,4 +1,4 @@
-import {cart, removeFromCart, updateCartQuantity,updateQuantity,saveToStorage} from "../data/cart.js";
+import {cart, removeFromCart, updateCartQuantity,updateQuantity,saveToStorage,updateDeliveryOption} from "../data/cart.js";
 import {products} from "../data/products.js";
 import {formatMoney} from "./utils/money.js";
 import dayjs from 'https://unpkg.com/dayjs@1.11.10/esm/index.js'
@@ -22,14 +22,14 @@ cart.forEach((item)=>{
     deliveryOptions.forEach((option) =>{
         if (option.id === deliveryOptionId){
             deliveryOption = option;
+            const today = dayjs();
+            const deliveryDate  = today.add(
+                deliveryOption.deliveryDays,'days'
+            );
+            dateString =  deliveryDate.format(
+                'dddd, MMMM D'
+            );
         }
-        const today = dayjs();
-        const deliveryDate  = today.add(
-            deliveryOption.deliveryDays,'days'
-        );
-        dateString =  deliveryDate.format(
-            'dddd, MMMM D'
-        );
     });
 
     cartSummaryHTML += `
@@ -90,7 +90,8 @@ function deliveryOptionsHTML(matchingProduct,item){
         const priceString = deliveryOption.priceCents === 0 ? 'FREE Shipping' : `$${formatMoney((deliveryOption.priceCents))} - `
         const isChecked = deliveryOption.id === item.deliveryOptionId
         html+= `
-            <div class="delivery-option">
+            <div class="delivery-option js-delivery-option" data-product-id="${matchingProduct.id}"
+            data-delivery-option-id="${deliveryOption.id}">
               <input type="radio"
               ${isChecked ? 'checked' : '' }
                 class="delivery-option-input"
@@ -177,3 +178,10 @@ document.querySelectorAll('.js-save-link')
             saveToStorage();
         });
     });
+
+document.querySelectorAll('.js-delivery-option').forEach((element) =>{
+    element.addEventListener('click',()=>{
+        const {productId,deliveryOptionId} = element.dataset;
+        updateDeliveryOption(productId,deliveryOptionId)
+    })
+})
