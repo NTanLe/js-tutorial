@@ -1,9 +1,14 @@
-// import { cart, removeFromCart, updateCartQuantity, updateQuantity, saveToStorage, updateDeliveryOption } from "../data/cart.js";
-import { products } from "../data/products.js";
 import { formatMoney } from "./utils/money.js";
 import dayjs from 'https://unpkg.com/dayjs@1.11.10/esm/index.js';
 import { deliveryOptions } from "../data/deliveryOptions.js";
 import { cart } from '../data/cart-oop.js'
+import { products, loadProducts } from "../data/products.js";
+// import "../data/practice.js"
+
+loadProducts(() => {
+  renderPayment();
+  renderOrderDelivery();
+})
 function renderOrderDelivery() {
   let cartSummaryHTML = '';
   cart.cartItems.forEach((item) => {
@@ -265,5 +270,3 @@ function renderPayment() {
   document.querySelector('.js-payment-summary').innerHTML = summaryPaymentHTML;
 }
 
-renderPayment();
-renderOrderDelivery();
