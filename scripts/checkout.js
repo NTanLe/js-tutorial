@@ -3,12 +3,34 @@ import dayjs from 'https://unpkg.com/dayjs@1.11.10/esm/index.js';
 import { deliveryOptions } from "../data/deliveryOptions.js";
 import { cart } from '../data/cart-oop.js'
 import { products, loadProducts } from "../data/products.js";
+import { loadCart } from "../data/cart-oop.js";
 // import "../data/practice.js"
 
-loadProducts(() => {
+// loadProducts(() => {
+//   loadCart(() => {
+//     renderPayment();
+//     renderOrderDelivery();
+//   });
+
+// })
+
+new Promise((resolve, reject) => {
+  loadProducts(() => {
+    resolve();
+  })
+}).then(() => {
+  return new Promise((resolve, reject) => {
+    loadCart(() => {
+      resolve();
+    })
+  })
+}).then(() => {
   renderPayment();
   renderOrderDelivery();
 })
+
+
+
 function renderOrderDelivery() {
   let cartSummaryHTML = '';
   cart.cartItems.forEach((item) => {
