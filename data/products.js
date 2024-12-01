@@ -23,3 +23,18 @@ export function loadProducts(fun) {
 
 }
 
+export const loadProductsFetch = () => {
+  const promise = fetch('https://supersimplebackend.dev/products').then((response) => { // fetch returns a promise contain response
+    return response.json(); // return a promise =>  
+  }).then((productData) => {
+    products = productData.map((productDetails) => {
+      return new Product(productDetails)
+    })
+    console.log('load products');
+
+  })
+  return promise; // return the promise to handle the async call
+}
+loadProductsFetch().then(() => {
+  console.log('next step');
+})

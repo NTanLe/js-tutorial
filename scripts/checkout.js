@@ -2,7 +2,7 @@ import { formatMoney } from "./utils/money.js";
 import dayjs from 'https://unpkg.com/dayjs@1.11.10/esm/index.js';
 import { deliveryOptions } from "../data/deliveryOptions.js";
 import { cart } from '../data/cart-oop.js'
-import { products, loadProducts } from "../data/products.js";
+import { products, loadProductsFetch, loadProducts } from "../data/products.js";
 import { loadCart } from "../data/cart-oop.js";
 // import "../data/practice.js"
 
@@ -14,21 +14,36 @@ import { loadCart } from "../data/cart-oop.js";
 
 // })
 
-new Promise((resolve, reject) => {
-  loadProducts(() => {
-    resolve();
-  })
-}).then(() => {
-  return new Promise((resolve, reject) => {
+// new Promise((resolve) => {
+//   loadProducts(() => {
+//     resolve();
+//   })
+// }).then(() => {
+//   return new Promise((resolve) => {
+//     loadCart(() => {
+//       resolve();
+//     })
+//   })
+// }).then(() => {
+//   renderPayment();
+//   renderOrderDelivery();
+// })
+
+Promise.all([
+  loadProductsFetch(),
+  new Promise((resolve) => {
     loadCart(() => {
       resolve();
-    })
+    });
   })
-}).then(() => {
-  renderPayment();
-  renderOrderDelivery();
-})
-
+])
+  .then(() => {
+    renderPayment();
+    renderOrderDelivery();
+  })
+  .catch((error) => {
+    console.error("Error in loading products or cart:", error);
+  });
 
 
 function renderOrderDelivery() {
