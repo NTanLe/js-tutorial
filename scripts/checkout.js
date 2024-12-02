@@ -29,23 +29,32 @@ import { loadCart } from "../data/cart-oop.js";
 //   renderOrderDelivery();
 // })
 
-Promise.all([
-  loadProductsFetch(),
-  new Promise((resolve) => {
+// Promise.all([
+//   loadProductsFetch(),
+//   new Promise((resolve) => {
+//     loadCart(() => {
+//       resolve();
+//     });
+//   })
+// ])
+//   .then(() => {
+//     renderPayment();
+//     renderOrderDelivery();
+//   })
+//   .catch((error) => {
+//     console.error("Error in loading products or cart:", error);
+//   });
+async function loadPage() {
+  await loadProductsFetch()
+  await new Promise((resolve) => {
     loadCart(() => {
-      resolve();
+      resolve()
     });
-  })
-])
-  .then(() => {
-    renderPayment();
-    renderOrderDelivery();
-  })
-  .catch((error) => {
-    console.error("Error in loading products or cart:", error);
   });
-
-
+  renderPayment();
+  renderOrderDelivery();
+}
+loadPage();
 function renderOrderDelivery() {
   let cartSummaryHTML = '';
   cart.cartItems.forEach((item) => {
