@@ -329,6 +329,8 @@ function renderPayment() {
     const order = await response.json();
     addOrder(order);
     window.location.href = 'orders.html';
+    console.log(order)
   });
+
 }
 

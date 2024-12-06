@@ -12,7 +12,7 @@ function renderProduct() {
     productsHTML += `
     <div class="product-container">
       <div class="product-image-container">
-        <img class="product-image"
+        <img class="product-image js-image-selected-${product.id}" 
           src="${product.image}">
       </div>
 
